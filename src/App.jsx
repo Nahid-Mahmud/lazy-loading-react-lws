@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Suspense, useState } from "react";
+import demos from "./data/demos";
+import importDemo from "./utils/importDemo";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedDeomo, setSelectedDemo] = useState(null);
+
+  const selectDemo = async (file) => {
+    const Demo = await importDemo(file);
+    const demoComponent = <Demo />;
+    setSelectedDemo(demoComponent);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="p-10">
+      <div className="space-y-5">
+        <h1>React Lazy load explained</h1>
+
+        {/* demo name */}
+        <div className="flex gap-2">
+          {demos?.map((demo) => (
+            <button
+              className="border px-3 py-1 border-2 border-gray-500 rounded-md hover:bg-slate-200"
+              onClick={() => selectDemo(demo?.file)}
+              key={demo?.id}
+            >
+              {demo?.name}
+            </button>
+          ))}
+        </div>
+
+        {/* demo component */}
+        <Suspense fallback={<div>Loading ...</div>}>{selectedDeomo && <div>{selectedDeomo}</div>}</Suspense>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
