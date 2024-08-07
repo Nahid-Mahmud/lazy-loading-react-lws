@@ -5,9 +5,13 @@ import importDemo from "./utils/importDemo";
 function App() {
   const [selectedDeomo, setSelectedDemo] = useState(null);
 
-  const selectDemo = async (file) => {
+  const loadDemo = async (file) => {
     const Demo = await importDemo(file);
-    const demoComponent = <Demo />;
+    return <Demo />;
+  };
+
+  const selectDemo = async (file) => {
+    const demoComponent = await loadDemo(file);
     setSelectedDemo(demoComponent);
   };
 
@@ -20,7 +24,7 @@ function App() {
         <div className="flex gap-2">
           {demos?.map((demo) => (
             <button
-              className="border px-3 py-1 border-2 border-gray-500 rounded-md hover:bg-slate-200"
+              className="px-3 py-1 border-2 border-gray-500 rounded-md hover:bg-slate-200"
               onClick={() => selectDemo(demo?.file)}
               key={demo?.id}
             >
@@ -30,7 +34,9 @@ function App() {
         </div>
 
         {/* demo component */}
-        <Suspense fallback={<div>Loading ...</div>}>{selectedDeomo && <div>{selectedDeomo}</div>}</Suspense>
+        <div>
+          <Suspense fallback={<div>Loading ...</div>}>{selectedDeomo}</Suspense>
+        </div>
       </div>
     </div>
   );
